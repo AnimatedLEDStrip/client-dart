@@ -1,0 +1,38 @@
+---
+language: dart
+
+branches:
+  only:
+    - master
+    - /^travis.*/
+
+stages:
+  - name: test
+  - name: deploy
+    if: tag IS present
+
+jobs:
+  include:
+    - stage: test
+      before_script:
+        - pub global activate coverage
+      script:
+        - pub run test
+      after_success:
+        - dart --disable-service-auth-codes --enable-vm-service=9292 --pause-isolates-on-exit test/test_all.dart &
+        - pub global run coverage:collect_coverage --port=9292 --out=coverage.json --wait-paused --resume-isolates
+        - pub global run coverage:format_coverage --lcov --packages=.packages --in=coverage.json --out=lcov.info --report-on=lib
+        - rm coverage.json
+        - bash <(curl -s https://codecov.io/bash)
+
+    - stage: deploy
+      before_deploy:
+        - mkdir -p ~/.pub-cache
+        - echo $DART_CREDENTIALS > ~/.pub-cache/credentials.json
+      install: skip
+      script: skip
+      deploy:
+        - provider: script
+          script: pub publish -f
+          on:
+            all_branches: true
