@@ -143,7 +143,7 @@ class AnimationSender {
         stripInfo = info;
         onNewStripInfoCallback?.call(info);
       } else {
-        print('Unrecognized data type: ' + token.substring(0, 5));
+        print('Unrecognized data type: ' + token.substring(0, 4));
       }
     }
   }
