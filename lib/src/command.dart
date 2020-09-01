@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2019-2020 AnimatedLEDStrip
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,33 +20,10 @@
  *  THE SOFTWARE.
  */
 
-import 'package:animatedledstrip/animatedledstrip.dart';
+class Command {
+  String command = '';
 
-void main() async {
-  var c = ColorContainer()..addColor(0xFF0000);
-  var data = AnimationData()
-    ..animation = 'Meteor'
-    ..addColor(c);
-
-  var s = AnimationSender('10.44.167.23', 6)
-    ..setOnNewAnimationDataAction((data) {
-      print('-----');
-      print(data.json());
-      print('-----');
-    })
-    ..setOnConnectAction((ip, port) {});
-  await s.start();
-  for (var i = 0; i < 10000; i++) {
-    await s.sendAnimationData(data);
-    await Future.delayed(Duration(milliseconds: 50));
+  String json() {
+    return 'CMD :{"command":"$command"}';
   }
-  await Future.delayed(Duration(seconds: 4));
-  var i;
-  var x = 0;
-  for (i in await s.runningAnimations.ids()) {
-//    print(i);
-    x++;
-  }
-  print(x);
-  s.end();
 }
